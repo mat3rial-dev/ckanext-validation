@@ -280,7 +280,7 @@ def resource_create(context, data_dict):
     if get_create_mode_from_config() == u'sync':
         is_upload = (hasattr(upload, 'filename') and
                      upload.filename is not None)
-        _run_sync_validation(resource_id, upload=is_upload, new_resource=True)
+        _run_sync_validation(resource_id, upload=is_upload, new_resource=True, user=context['user'])
 
     # Custom code ends
 
@@ -406,7 +406,7 @@ def resource_update(context, data_dict):
     return resource
 
 
-def _run_sync_validation(resource_id, upload=False, new_resource=True):
+def _run_sync_validation(resource_id, upload=False, new_resource=True, user=None):
 
     try:
         t.get_action(u'resource_validation_run')(
@@ -440,7 +440,7 @@ def _run_sync_validation(resource_id, upload=False, new_resource=True):
         if new_resource:
             # Delete resource
             t.get_action(u'resource_delete')(
-                {u'ignore_auth': True, 'user': None},
+                {u'ignore_auth': True, 'user': user},
                 {u'id': resource_id}
             )
 
